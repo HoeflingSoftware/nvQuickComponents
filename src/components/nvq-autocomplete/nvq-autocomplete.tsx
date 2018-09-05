@@ -19,6 +19,7 @@ export class NvqAutocomplete {
     items:string[] = [];
     endpoint:string = "";
     style:{ [key:string]:string } = {};
+    state:string = "";
 
     @Watch('itemsSource')
     itemsSourceHandler(newValue:string) {
@@ -78,6 +79,7 @@ export class NvqAutocomplete {
 
         let getRequest = (query:string) => {
             let uri:string = this.endpoint + query;
+            this.state = query;
             var promise = fetch(uri)
                 .then((response) => response.json());
 
@@ -86,11 +88,13 @@ export class NvqAutocomplete {
 
         let getRemoteResults = (input:string, callback: (newData:string[]) => any) => {
             getRequest(input).then((response) => {
-                if (response) {
-                    callback(response);
-                } else {
-                    clear();
-                }                
+                if (this.state === input) {
+                    if (response) {
+                        callback(response);
+                    } else {
+                        clear();
+                    }      
+                }          
             });
         }
 
